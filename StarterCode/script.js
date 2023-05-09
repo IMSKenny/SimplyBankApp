@@ -4,7 +4,7 @@
 
 const account1 = {
   userName: 'Cecil Ireland',
-  transactions: [500, 250, -300, 5000, -850, -110, -170, 1100],
+  transactions: [500, 250, -300, 5000, -850, -110, -170, 1100, 2540, -110],
   interest: 1.5,
   pin: 1111,
 };
@@ -64,3 +64,47 @@ const inputTransferAmount = document.querySelector('.form__input--amount');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
+
+const displayTransactions = transactions => {
+  containerTransactions.innerHTML = '';
+  transactions.forEach((trans, index) => {
+    const transType = trans > 0 ? 'deposit' : 'withdrawal';
+
+    const transactionRow = `
+    <div class="transactions__row">
+    <div class="transactions__type transactions__type--${transType}">
+      ${index + 1} ${transType} 
+    </div>
+    <div class="transactions__value">${trans}</div>
+  </div>
+  `;
+    containerTransactions.insertAdjacentHTML('afterbegin', transactionRow);
+  });
+};
+
+displayTransactions(account1.transactions);
+
+const createNickNames = accounts => {
+  accounts.forEach(account => {
+    account.nickName = account.userName
+      .toLocaleLowerCase()
+      .split(' ')
+      .map(item => item[0])
+      .join('');
+  });
+};
+
+createNickNames(accounts);
+console.log(accounts);
+
+
+
+
+// const userName = 'Oliver Avila';
+// const nickName = userName
+//   .toLocaleLowerCase()
+//   .split(' ')
+//   .map(item => item[0])
+//   .join('');
+
+// console.log(nickName);
