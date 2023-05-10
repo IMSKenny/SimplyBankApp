@@ -95,8 +95,16 @@ const createNickNames = accounts => {
 };
 
 createNickNames(accounts);
-console.log(accounts);
+//console.log(accounts);
 
+const displayBalance = transactions => {
+  const balance = transactions.reduce((balance, trans) => balance + trans, 0);
+  labelBalance.textContent = `${balance}$` ;
+  console.log(balance);
+}
+
+
+displayBalance(account1.transactions);
 
 
 
