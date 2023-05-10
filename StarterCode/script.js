@@ -82,8 +82,6 @@ const displayTransactions = transactions => {
   });
 };
 
-displayTransactions(account1.transactions);
-
 const createNickNames = accounts => {
   accounts.forEach(account => {
     account.nickName = account.userName
@@ -96,42 +94,92 @@ const createNickNames = accounts => {
 
 createNickNames(accounts);
 
-const displayBalance = transactions => {
-  const balance = transactions.reduce((balance, trans) => balance + trans, 0);
+const displayBalance = account => {
+  const balance = account.transactions.reduce(
+    (balance, trans) => balance + trans,
+    0
+  );
+  account.balace = balance;
   labelBalance.textContent = `${balance}$`;
 };
 
-displayBalance(account1.transactions);
-
-const displayTotal = (transactions, interest) => {
-  const depositesTotal = transactions
+const displayTotal = account => {
+  const depositesTotal = account.transactions
     .filter(trans => trans > 0)
     .reduce((total, trans) => total + trans, 0);
   labelSumIn.textContent = `${depositesTotal}$`;
 
-  const withdrawalTotal = transactions
+  const withdrawalTotal = account.transactions
     .filter(trans => trans < 0)
     .reduce((total, trans) => total + trans, 0);
   labelSumOut.textContent = `${withdrawalTotal}$`;
 
-  const interestTotal = transactions
+  const interestTotal = account.transactions
     .filter(trans => trans > 0)
-    .map(depos => (depos * interest) / 100)
+    .map(depos => (depos * account.interest) / 100)
     .filter(int => int >= 5)
     .reduce((dep, int) => dep + int, 0);
   labelSumInterest.textContent = `${interestTotal}$`;
 };
 
-displayTotal(account1.transactions, account1.interest);
+const updateUi = (account) => {
+  displayTransactions(account.transactions);
+  displayBalance(account);
+  displayTotal(account);
+};
+
+let currentAccount;
+
+btnLogin.addEventListener('click', event => {
+  event.preventDefault();
+  currentAccount = accounts.find(
+    account => account.nickName === inputLoginUsername.value
+  );
+
+  if (currentAccount?.pin === +inputLoginPin.value) {
+    containerApp.style.opacity = 100;
+    labelWelcome.textContent = `Привет, ${
+      currentAccount.userName.split(' ')[0]
+    }!`;
+    inputLoginUsername.value = '';
+    inputLoginPin.value = '';
+    inputLoginPin.blur();
+    inputLoginUsername.blur();
+    updateUi(currentAccount); 
+  }
+});
+
+btnTransfer.addEventListener('click', event => {
+  event.preventDefault();
+  const transferAmount = +inputTransferAmount.value;
+  const recipientNickname = inputTransferTo.value;
+  const recipientAccount = accounts.find(
+    account => account.nickName === recipientNickname
+  );
+  if (
+    transferAmount > 0 &&
+    currentAccount.balace >= transferAmount &&
+    recipientAccount?.nickName !== currentAccount.nickName &&
+    recipientAccount
+  ) {
+    currentAccount.transactions.push(-transferAmount);
+    recipientAccount.transactions.push(transferAmount);
+    updateUi(currentAccount);
+    inputTransferAmount.value = '';
+    inputTransferTo.value = '';
+    inputTransferTo.blur();
+    inputTransferAmount.blur();
+  }
+});
 
 // const getAverageHumanAge = (catAges) => {
 //   const humanAge = catAges.map(age => age <= 2 ? age * 10 : age * 7);
 //   const humanAgeAdult = humanAge.filter(age => age >= 18);
-//   const sumAge = humanAgeAdult.reduce((aver, age) => aver + age, 0);
+//   const averageAge = humanAgeAdult.reduce((aver, age) => aver + age, 0)/humanAgeAdult.length;
 //   console.log(humanAge.length);
 //   console.log(humanAgeAdult.length);
 
-//   return sumAge / (humanAge.length - (humanAge.length - humanAgeAdult.length))
+//   return averageAge
 // }
 
 // console.log(getAverageHumanAge([1, 2, 3, 10]));
