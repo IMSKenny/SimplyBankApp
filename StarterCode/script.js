@@ -4,8 +4,8 @@
 
 const account1 = {
   userName: 'Cecil Ireland',
-  transactions: [500, 250, -300, 5000, -850, -110, -170, 1100, 2540, -110],
-  interest: 1.5,
+  transactions: [500, 250, -300, 5000, -850, -110, -170, 1100],
+  interest: 1.1,
   pin: 1111,
 };
 
@@ -95,24 +95,43 @@ const createNickNames = accounts => {
 };
 
 createNickNames(accounts);
-//console.log(accounts);
 
 const displayBalance = transactions => {
   const balance = transactions.reduce((balance, trans) => balance + trans, 0);
-  labelBalance.textContent = `${balance}$` ;
-  console.log(balance);
-}
-
+  labelBalance.textContent = `${balance}$`;
+};
 
 displayBalance(account1.transactions);
 
+const displayTotal = (transactions, interest) => {
+  const depositesTotal = transactions
+    .filter(trans => trans > 0)
+    .reduce((total, trans) => total + trans, 0);
+  labelSumIn.textContent = `${depositesTotal}$`;
 
+  const withdrawalTotal = transactions
+    .filter(trans => trans < 0)
+    .reduce((total, trans) => total + trans, 0);
+  labelSumOut.textContent = `${withdrawalTotal}$`;
 
-// const userName = 'Oliver Avila';
-// const nickName = userName
-//   .toLocaleLowerCase()
-//   .split(' ')
-//   .map(item => item[0])
-//   .join('');
+  const interestTotal = transactions
+    .filter(trans => trans > 0)
+    .map(depos => (depos * interest) / 100)
+    .filter(int => int >= 5)
+    .reduce((dep, int) => dep + int, 0);
+  labelSumInterest.textContent = `${interestTotal}$`;
+};
 
-// console.log(nickName);
+displayTotal(account1.transactions, account1.interest);
+
+// const getAverageHumanAge = (catAges) => {
+//   const humanAge = catAges.map(age => age <= 2 ? age * 10 : age * 7);
+//   const humanAgeAdult = humanAge.filter(age => age >= 18);
+//   const sumAge = humanAgeAdult.reduce((aver, age) => aver + age, 0);
+//   console.log(humanAge.length);
+//   console.log(humanAgeAdult.length);
+
+//   return sumAge / (humanAge.length - (humanAge.length - humanAgeAdult.length))
+// }
+
+// console.log(getAverageHumanAge([1, 2, 3, 10]));
